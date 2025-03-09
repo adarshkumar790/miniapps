@@ -30,21 +30,22 @@ export default function InitDataPage() {
   const initDataState = useSignal(initData.state);
 
   useEffect(() => {
-    if (initDataRaw) {
-      console.log('Sending initData to database:', initDataRaw);
-      fetch('/api/saveInitData', {
+    if (initDataRaw && initDataState) {
+      console.log('Sending full initDataState to database:', initDataState);
+      
+      fetch('http://localhost:5000/api/store', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(initDataRaw),
+        body: JSON.stringify(initDataState),
       })
         .then((response) => response.json())
         .then((data) => console.log('Database response:', data))
         .catch((error) => console.error('Error sending initData:', error));
     }
-  }, [initDataRaw]);
-
+  }, [initDataRaw, initDataState]);
+  
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initDataState || !initDataRaw) {
       return;
@@ -124,14 +125,20 @@ export default function InitDataPage() {
       </Page>
     );
   }
+  
+  console.log('Init Data State:', JSON.stringify(initDataState, null, 2));
+  
   return (
     <Page>
       <List>
         <DisplayData header={'Init Data'} rows={initDataRows}/>
-        {userRows && <DisplayData header={'User'} rows={userRows}/>}
-        {receiverRows && <DisplayData header={'Receiver'} rows={receiverRows}/>}
-        {chatRows && <DisplayData header={'Chat'} rows={chatRows}/>}
+        {userRows && <DisplayData header={'User'} rows={userRows}/>} 
+        {receiverRows && <DisplayData header={'Receiver'} rows={receiverRows}/>} 
+        {chatRows && <DisplayData header={'Chat'} rows={chatRows}/>} 
       </List>
+      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
+        {JSON.stringify(initDataState, null, 2)}
+      </pre>
     </Page>
   );
 };
