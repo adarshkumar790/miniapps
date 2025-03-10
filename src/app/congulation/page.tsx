@@ -21,7 +21,7 @@ const RatsKingdomCard = () => {
       <h2 className="font-[aakar] font-extrabold text-5xl leading-none text-white text-center shadow-lg">
         Congratulations
       </h2>
-      <p className="font-[aakar] font-medium text-3xl text-white mt-2">You've earned</p>
+      <p className="font-[aakar] font-medium text-3xl text-white mt-2">{`You've earned`}</p>
       <h1 className="font-[aakar] font-bold text-6xl text-white mt-2">4000 RK</h1>
       
       {/* Claim Info Centered */}
