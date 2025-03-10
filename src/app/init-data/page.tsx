@@ -33,7 +33,7 @@ export default function InitDataPage() {
     if (initDataRaw && initDataState) {
       console.log('Sending full initDataState to database:', initDataState);
       
-      fetch('http://localhost:5000/api/store', {
+      fetch('https://f114-2402-a00-152-cd37-bf2d-791d-4548-54ed.ngrok-free.app/api/store', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
