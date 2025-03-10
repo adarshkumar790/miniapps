@@ -13,7 +13,7 @@ const RatsKingdomCard = () => {
         <appkit-button/>
       </div>
       
-      <div className="absolute text-white top-18 left-4 flex items-center text-xl px-3 py-2 rounded-lg">
+      <div className="absolute text-white top-20 left-4 flex items-center text-xl px-3 py-2 rounded-lg">
         Verified
         <CheckCircle className="text-blue-400 ml-1" size={14} />
       </div>

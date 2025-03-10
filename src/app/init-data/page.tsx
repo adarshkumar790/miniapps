@@ -31,21 +31,21 @@ export default function InitDataPage() {
 
   useEffect(() => {
     if (initDataRaw && initDataState) {
-      console.log('Sending full initDataState to database:', initDataState);
+      console.log('Sending full initDataState to database:', initDataRaw);
       
-      fetch('https://miniapp-server.onrender.com/api/store', {
+      fetch('https://miniapp-server.onrender.com/api/store',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': initDataRaw
         },
-        body: JSON.stringify(initDataState),
       })
         .then((response) => response.json())
         .then((data) => console.log('Database response:', data))
         .catch((error) => console.error('Error sending initData:', error));
     }
   }, [initDataRaw, initDataState]);
-  
+   
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initDataState || !initDataRaw) {
       return;
