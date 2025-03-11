@@ -32,20 +32,25 @@ export default function InitDataPage() {
   useEffect(() => {
     if (initDataRaw && initDataState) {
       console.log('Sending full initDataState to database:', initDataRaw);
-      
-      fetch('https://miniapp-server.onrender.com/api/store',{
-        method: 'POST',
+  
+      fetch('http://13.233.44.151:80/api/get-proof', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': initDataRaw
         },
       })
-        .then((response) => response.json())
-        .then((data) => console.log('Database response:', data))
+        .then((response) => {
+          console.log('Raw response:', response);
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Parsed JSON response:', data);
+        })
         .catch((error) => console.error('Error sending initData:', error));
     }
   }, [initDataRaw, initDataState]);
-   
+  
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initDataState || !initDataRaw) {
       return;
