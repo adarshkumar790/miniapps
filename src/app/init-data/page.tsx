@@ -32,9 +32,9 @@ export default function InitDataPage() {
   useEffect(() => {
     if (initDataRaw && initDataState) {
       console.log('Sending full initDataState to database:', initDataRaw);
-  
-      fetch('http://13.233.44.151:80/api/get-proof', {
-        method: 'GET',
+
+      fetch('https://airdrop.ratskingdom.com/api/get-proof', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': initDataRaw
