@@ -199,8 +199,7 @@ export default function InitDataPage() {
       </div>
 
       <div className="absolute text-white top-20 left-4 flex items-center text-xl px-3 py-2 rounded-lg">
-        Verified <CheckCircle className="text-green-400 ml-1" size={20} />
-        <CheckCircle className="text-blue-400 ml-1" size={14} />
+        Verified  <Image src="/verification_tick.png" width={25} height={25} alt='verified'/>
       </div>
 
       <h2 className="font-[aakar] font-extrabold text-5xl leading-none text-white text-center shadow-lg">

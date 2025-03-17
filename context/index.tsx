@@ -26,8 +26,8 @@ const metadata = {
 const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [mainnet, arbitrum, bsc, bscTestnet],
-  defaultNetwork: mainnet,
+  networks: [bscTestnet],
+  defaultNetwork: bscTestnet,
   metadata: metadata,
   features: {
     analytics: true // Optional - defaults to your Cloud configuration
@@ -38,7 +38,7 @@ function ContextProvider({ children, cookies }: { children: ReactNode; cookies: 
   const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
 
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig as any} initialState={initialState}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )

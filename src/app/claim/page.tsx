@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import CONTRACT_ABI from "../../ABI/abi.json";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { json } from 'stream/consumers';
+// import Web
 
 type WalletComponentProps = {
   walletProvider: any;
@@ -17,10 +17,10 @@ type WalletComponentProps = {
 };
 
 // Define your contract details
-const CONTRACT_ADDRESS = "0x13ceAC846f1f743B9AAe928b08c341C20742e457" ;//"0x566f344E70E06669f35a127caB2d69F2c80756aC";
+const CONTRACT_ADDRESS = "0x170fA30F1c6d28f75ac236DdFC9869e06DE8EaB0";
 
 const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chainId }) => {
-  const { walletProvider: providerInstance, chainId: activeChainId } = useAppKitProvider('eip155');
+  const { walletProvider: providerInstance, chainId: activeChainId } = useAppKitProvider('eip155')
 
   // State variables
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -35,16 +35,16 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
   const proof = searchParams.get("proof");
   const merkleProof: string[] = proof ? JSON.parse(proof) : [
     "0x1f8b98d2001e2333e8bc83fb24a45827525bda23ced762a81daf8f74405584c9",
-        "0x4e5ae2c90f5facc898ecd3165f10d545c127c4399b292cb2b4be9f50e3ede629",
-        "0x836d9dba99782c33da63830ebaa56f3902c293c224d66676d1f57ba750ffdab0",
-        "0x3661ea0ddea70491392b17d5546888596dcec86715749af67c57e6d3c5f5b811",
-        "0xbb1ae150705caecc9ab958caea00e642848f4ba18d2d3ad02b397eec2961faa8",
-        "0xfed865bd5740653bedf3792a0cccdb66c5b849adde4adbce54a4b43dc0335459",
-        "0xd3c56372030ac2062d46cd3279ed2db609ae5ebf271eac800dc2d41c3f7914b5",
-        "0xe32f2657f280a0d44b5b38a877122de6a874cb209b098fb9496732d7b3ec9f76",
-        "0x3be070409b7914aa2e6ce4b319871ab6e723173ff473ea08812e586a595749cb",
-        "0x023b70e97f126e373425e8fda8be59b549c5f80cbfc1863e383f2a38191a1e89",
-        "0x073dea366241cc5755ed4597f79b3434e6f476b89e241c7e1a94f1c524992f9e"
+    "0x4e5ae2c90f5facc898ecd3165f10d545c127c4399b292cb2b4be9f50e3ede629",
+    "0x836d9dba99782c33da63830ebaa56f3902c293c224d66676d1f57ba750ffdab0",
+    "0x3661ea0ddea70491392b17d5546888596dcec86715749af67c57e6d3c5f5b811",
+    "0xbb1ae150705caecc9ab958caea00e642848f4ba18d2d3ad02b397eec2961faa8",
+    "0xfed865bd5740653bedf3792a0cccdb66c5b849adde4adbce54a4b43dc0335459",
+    "0xd3c56372030ac2062d46cd3279ed2db609ae5ebf271eac800dc2d41c3f7914b5",
+    "0xe32f2657f280a0d44b5b38a877122de6a874cb209b098fb9496732d7b3ec9f76",
+    "0x3be070409b7914aa2e6ce4b319871ab6e723173ff473ea08812e586a595749cb",
+    "0x023b70e97f126e373425e8fda8be59b549c5f80cbfc1863e383f2a38191a1e89",
+    "0x073dea366241cc5755ed4597f79b3434e6f476b89e241c7e1a94f1c524992f9e"
   ];
 
   // Initialize wallet on component mount
@@ -89,7 +89,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
     }
 
     try {
-     
+
       setIsClaiming(true);
 
       // Create contract instance
@@ -99,27 +99,28 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
       const tx = await contract.claimTokens(telegramId, amount, merkleProof, {
         value: ethers.parseEther("0.000000000000000001"),
       });
-      
+
       console.log(`Transaction sent: ${tx}`);
       // toast.info(`Transaction sent: ${tx.hash}`,{});
       toast.info(
         <>
-          Transaction sent:{" "}
+          <p>Txn :</p>
           <a
             href={`https://testnet.bscscan.com/tx/${tx.hash}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: "#007bff", textDecoration: "underline" }}
           >
-            {tx.hash}
+            {/* {tx.hash.slice} */}
+            {tx.hash.slice(0, 4)}...{tx.hash.slice(-4)}
           </a>
         </>,
-        {}
-      );      
+        { autoClose: 10000 }
+      );
       await tx.wait();
-     
-      toast.success("Tokens claimed successfully!");
-    } catch (error :any) {
+
+      toast.success(" Tokens claimed successfully!");
+    } catch (error: any) {
       console.log("Error claiming tokens:", error.message.split(",")[0].split("("));
       toast.error(`${error.message.split(",")[0].split("(")[0] || "Unknown error"}`);
     } finally {
@@ -127,20 +128,20 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
     }
   };
 
-  const addTokenWithEthers=async()=> {
+  const addTokenWithEthers = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
     await signer.provider.send("wallet_watchAsset", [{
-        type: "ERC20",
-        options: {
-            address: CONTRACT_ADDRESS,
-            symbol: "RK",
-            decimals: 18,
-            image: "/rat.png",
-        },
+      type: "ERC20",
+      options: {
+        address: CONTRACT_ADDRESS,
+        symbol: "RK",
+        decimals: 18,
+        image: "/rat.png",
+      },
     }]);
-}
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#1E1E1E] text-white p-2 relative overflow-hidden">
@@ -158,14 +159,14 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
       <div className='mb-12'>
         <p className="text-2xl font-bold">Network:</p>
         <p className="text-m text-gray-400">POL (POLYGON)</p>
-        <p className=''>{walletAddress}</p>
+        {/* <p className=''>{walletAddress}</p> */}
 
         <p className="text-2xl font-bold mt-4">Amount to claim:</p>
         <p className="text-m text-gray-400">{amount} RK</p>
-        
+
         <p className="text-2xl font-bold mt-4">CONTRACT ADDRESS</p>
         <p className="text-m text-gray-400 truncate">
-        {CONTRACT_ADDRESS.slice(0, 10)}...{CONTRACT_ADDRESS.slice(-16)}
+        {CONTRACT_ADDRESS?.slice(0, 10)}...{CONTRACT_ADDRESS?.slice(-16)}
         </p>
       </div>
         <div className="flex gap-2">
@@ -179,24 +180,26 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
             Add to Wallet
           </button>
         </div>
-      
+
 
       <button
-        className="mt-4 px-8 py-3 text-2xl text-center font-bold bg-white text-black rounded-xl shadow-md hover:bg-gray-200"
+        className="mt-4 px-8 py-3 text-2xl text-center font-bold bg-white text-black rounded-xl shadow-md hover:bg-green-400"
         onClick={claimTokens}
         disabled={isClaiming}
       >
         {isClaiming ? "Claiming..." : "Claim Now"}
       </button>
 
-      <div className="absolute bottom-12 left-5 opacity-80">
+      <div className="absolute bottom-12 left-5 opacity-80 ">
         <Image src="/leftside.png" alt='leftside' width={80} height={80} />
       </div>
-      <div className="absolute bottom-0 right-0 opacity-80">
-        <Image src="/rightside.png" alt="rightcat" width={200} height={200} />
+      <div className="absolute bottom-0 right-0 opacity-80 sm:h-[50]">
+        <Image src="/rightside.png" alt="rightcat" width={150} height={150} />
       </div>
     </div>
   );
+
+  
 }
 
 export default WalletComponent;

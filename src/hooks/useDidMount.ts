@@ -7,7 +7,10 @@ export function useDidMount(): boolean {
   const [didMount, setDidMount] = useState(false);
 
   useEffect(() => {
-    setDidMount(true);
+    setTimeout(()=>{
+      setDidMount(true);
+    },3000)
+    
   }, []);
 
   return didMount;
