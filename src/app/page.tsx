@@ -186,6 +186,7 @@ export default function InitDataPage() {
         </button>
       </Link>
       </div>
+      <appkit-button />
       </div>
     );
   }
@@ -234,7 +235,7 @@ export default function InitDataPage() {
       <div className="absolute bottom-12 right-0 opacity-80 text-3xl">
         <Image src="/ratsright.png" width={120} height={120} alt="rightrats" />
       </div>
-
+      
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import type { Metadata } from 'next';
 import { getLocale } from 'next-intl/server';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 
 import { Root } from '@/components/Root/Root';
@@ -20,21 +21,32 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   const locale = await getLocale();
 
-  const headersObj =  headers();
+  const headersObj = headers();
   const cookies = headersObj.get('cookie')
 
   return (
     <html lang={locale}>
-    <body>
-    <ContextProvider cookies={cookies}>
-      <I18nProvider>
-        <Root>
-        {children}
-    
-        </Root>
-      </I18nProvider>
-      </ContextProvider>
-    </body>
+      <body>
+        <ContextProvider cookies={cookies}>
+          <I18nProvider>
+            <Root>
+              {children}
+
+            </Root>
+          </I18nProvider>
+        </ContextProvider>
+        <ToastContainer position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+          transition={Bounce} />
+      </body>
     </html>
   );
 }
