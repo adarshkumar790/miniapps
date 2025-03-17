@@ -101,7 +101,21 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
       });
       
       console.log(`Transaction sent: ${tx}`);
-      toast.info(`Transaction sent: ${tx.hash}`,{});
+      // toast.info(`Transaction sent: ${tx.hash}`,{});
+      toast.info(
+        <>
+          Transaction sent:{" "}
+          <a
+            href={`https://testnet.bscscan.com/tx/${tx.hash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#007bff", textDecoration: "underline" }}
+          >
+            {tx.hash}
+          </a>
+        </>,
+        {}
+      );      
       await tx.wait();
      
       toast.success("Tokens claimed successfully!");
@@ -121,9 +135,9 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
         type: "ERC20",
         options: {
             address: CONTRACT_ADDRESS,
-            symbol: "XYZ",
+            symbol: "RK",
             decimals: 18,
-            image: "https://yourdomain.com/token-logo.png",
+            image: "/rat.png",
         },
     }]);
 }
@@ -154,7 +168,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
         {CONTRACT_ADDRESS.slice(0, 10)}...{CONTRACT_ADDRESS.slice(-16)}
         </p>
       </div>
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-2">
           <button
             className="px-4 py-2 border border-gray-500 rounded-lg bg-gray-600 hover:bg-gray-700"
             onClick={() => window.open("https://polygonscan.com/token/0xa2E1a3228488f25ca7d4887DCe07c9625d4De5Df#code", "_blank")}
