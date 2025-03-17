@@ -14,7 +14,7 @@ import ContextProvider from '../../context';
 import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'Your Application Title Goes Here',
+  title: 'Rats Kingdom',
   description: 'Your application description goes here',
 };
 
