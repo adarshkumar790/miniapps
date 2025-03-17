@@ -5,10 +5,13 @@ import { ethers } from 'ethers';
 import { useAppKitProvider } from '@reown/appkit/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSearchParams } from "next/navigation";
 import CONTRACT_ABI from "../../ABI/abi.json";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { Copy } from 'lucide-react';
+
 // import Web
 
 type WalletComponentProps = {
@@ -17,9 +20,10 @@ type WalletComponentProps = {
 };
 
 // Define your contract details
-const CONTRACT_ADDRESS = "0x170fA30F1c6d28f75ac236DdFC9869e06DE8EaB0";
+const CONTRACT_ADDRESS = "0xB5b163D8964Cf216f153E1c757330c991aa6D3ae";
 
 const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chainId }) => {
+  //@ts-ignore
   const { walletProvider: providerInstance, chainId: activeChainId } = useAppKitProvider('eip155')
 
   // State variables
@@ -27,7 +31,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
   const [balance, setBalance] = useState<string | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
-
+  const [address] = useState(CONTRACT_ADDRESS);
   // Get URL search params
   const searchParams = useSearchParams();
   const telegramId = searchParams.get("telegramId") ?? "721749248";
@@ -51,9 +55,11 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
   useEffect(() => {
     async function initializeWallet() {
       try {
+        //@ts-ignore
         if (!providerInstance?.request) return;
 
         // Connect wallet
+        //@ts-ignore
         const accounts: string[] = await providerInstance.request({ method: 'eth_accounts' });
         if (accounts.length === 0) throw new Error("No accounts connected!");
 
@@ -61,6 +67,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
         setWalletAddress(address);
 
         // Get provider & signer
+        //@ts-ignore
         const ethersProvider = new ethers.BrowserProvider(providerInstance);
         const signerInstance = await ethersProvider.getSigner();
         setSigner(signerInstance);
@@ -68,6 +75,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
         console.log("Connected Wallet Address:", await signerInstance.getAddress());
 
         // Fetch wallet balance
+        //@ts-ignore
         const balanceWei: string = await providerInstance.request({
           method: 'eth_getBalance',
           params: [address, 'latest'],
@@ -104,16 +112,18 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
       // toast.info(`Transaction sent: ${tx.hash}`,{});
       toast.info(
         <>
-          <p>Txn :</p>
+          <p>Txn hash :</p>
+          <p>
           <a
             href={`https://testnet.bscscan.com/tx/${tx.hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "#007bff", textDecoration: "underline" }}
+            className='text-white'
           >
             {/* {tx.hash.slice} */}
             {tx.hash.slice(0, 4)}...{tx.hash.slice(-4)}
           </a>
+          </p>
         </>,
         { autoClose: 10000 }
       );
@@ -128,20 +138,56 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
     }
   };
 
-  const addTokenWithEthers = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+  async function addTokenToMetaMask() {
+    // Check if MetaMask is installed
+    if (typeof window.ethereum === 'undefined') {
+      alert('MetaMask is not installed!');
+      return;
+    }
 
-    await signer.provider.send("wallet_watchAsset", [{
-      type: "ERC20",
+    // Request account access if needed
+    try {
+      //@ts-ignore
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+    } catch (error) {
+      console.error('User denied account access:', error);
+      return;
+    }
+
+    // Token details
+    const tokenDetails = {
+      type: 'ERC20',
       options: {
-        address: CONTRACT_ADDRESS,
-        symbol: "RK",
-        decimals: 18,
-        image: "/rat.png",
+        address: '0xCE35BfF751C2B3754aBa957Fb5e0705AE9f41f3A', // Replace with your token contract address
+        symbol: 'RK', // Replace with your token symbol
+        decimals: 18, // Replace with your token decimals
+        image: '/rats.png', // Replace with your token logo URL (optional)
       },
-    }]);
+    };
+
+    // Add token to MetaMask
+    try {
+      //@ts-ignore
+      const wasAdded = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: tokenDetails,
+      });
+
+      if (wasAdded) {
+        console.log('Token added successfully!');
+        alert('Token added successfully!');
+      } else {
+        console.log('Token was not added.');
+        alert('Token was not added.');
+      }
+    } catch (error) {
+      console.error('Error adding token:', error);
+      alert('Error adding token. See console for details.');
+    }
   }
+
+
+
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#1E1E1E] text-white p-2 relative overflow-hidden">
@@ -165,21 +211,27 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
         <p className="text-m text-gray-400">{amount} RK</p>
 
         <p className="text-2xl font-bold mt-4">CONTRACT ADDRESS</p>
-        <p className="text-m text-gray-400 truncate">
-        {CONTRACT_ADDRESS?.slice(0, 10)}...{CONTRACT_ADDRESS?.slice(-16)}
-        </p>
+        <p className="text-m text-gray-400 truncate flex">
+          {CONTRACT_ADDRESS?.slice(0, 10)}...{CONTRACT_ADDRESS?.slice(-10)}
+         <CopyToClipboard text={CONTRACT_ADDRESS} onCopy={() => toast.success("Copied!")}>
+        <button className="p-1 rounded-md  transition">
+          <Copy size={20} />
+        </button>
+      </CopyToClipboard>
+        </p>  
+       
       </div>
-        <div className="flex gap-2">
-          <button
-            className="px-4 py-2 border border-gray-500 rounded-lg bg-gray-600 hover:bg-gray-700"
-            onClick={() => window.open("https://polygonscan.com/token/0xa2E1a3228488f25ca7d4887DCe07c9625d4De5Df#code", "_blank")}
-          >
-            View on Explorer
-          </button>
-          <button className="px-4 py-2 border border-gray-500 rounded-lg hover:bg-gray-700 bg-gray-600" onClick={()=>addTokenWithEthers()}>
-            Add to Wallet
-          </button>
-        </div>
+      <div className="flex gap-2">
+        <button
+          className="px-4 py-2 border border-gray-500 rounded-lg bg-gray-600 hover:bg-gray-700"
+          onClick={() => window.open("https://polygonscan.com/token/0xa2E1a3228488f25ca7d4887DCe07c9625d4De5Df#code", "_blank")}
+        >
+          View on Explorer
+        </button>
+        <button className="px-4 py-2 border border-gray-500 rounded-lg hover:bg-gray-700 bg-gray-600" onClick={() => addTokenToMetaMask()}>
+          Add to Wallet
+        </button>
+      </div>
 
 
       <button
@@ -199,7 +251,7 @@ const WalletComponent: React.FC<WalletComponentProps> = ({ walletProvider, chain
     </div>
   );
 
-  
+
 }
 
 export default WalletComponent;
